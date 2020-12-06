@@ -2,8 +2,6 @@
 <PluginConfig>
 	<SupportURL>http://forums.indigodomo.com/viewforum.php?f=213</SupportURL>
 	<Field id="space1" type="label"><Label/></Field>
-    <Field id="separator1" type="separator"/>
-    <Field id="space2" type="label"><Label/></Field>
 	<Field id="units_temperature" type="menu" defaultValue="F">
 		<Label>Temperature Units:</Label>
 		<List>
@@ -37,9 +35,9 @@
 		</List>
 	</Field>
 
-	<Field id="space3" type="label"><Label/></Field>
+	<Field id="space2" type="label"><Label/></Field>
     <Field id="separator2" type="separator"/>
-    <Field id="space4" type="label"><Label/></Field>
+    <Field id="space3" type="label"><Label/></Field>
 
 	<Field id="logLevel" type="menu" defaultValue="20">
 		<Label>Event Logging Level:</Label>
