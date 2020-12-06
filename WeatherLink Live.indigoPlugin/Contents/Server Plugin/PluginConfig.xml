@@ -9,13 +9,6 @@
 			<Option value="C">Celsius</Option>
 		</List>
 	</Field>
-	<Field id="units_rain" type="menu" defaultValue="IN">
-		<Label>Rain Units:</Label>
-		<List>
-			<Option value="IN">Inches</Option>
-			<Option value="MM">Millimetres</Option>
-		</List>
-	</Field>
 	<Field id="units_barometric_pressure" type="menu" defaultValue="IN">
 		<Label>Barometric Pressure Units:</Label>
 		<List>
