@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 ####################
 
+try:
+    import indigo
+except ImportError:
+    pass
+
 import time
-import socket
-import json
 import logging
-import requests
 from aprs import APRS
 from pws import PWS
 from wunderground import WU
@@ -111,7 +113,40 @@ class Plugin(indigo.PluginBase):
 ################################################################################
               
     def sensorDictToList(self, sensor_dict):
-    
+        # Retrieve user selected reporting units
+        units_temperature = self.pluginPrefs.get("units_temperature", "F")
+        units_barometric_pressure = self.pluginPrefs.get("units_barometric_pressure", "IN")
+        units_wind = self.pluginPrefs.get("units_wind", "MPH")
+
+        def temperature_conversion(value_to_convert):
+            if units_temperature == "C":
+                return (((value_to_convert - 32.0) * 5.0) / 9.0), "C"
+            else:
+                # Assume default Fahrenheit
+                return value_to_convert, "F"
+
+        def barometric_pressure_conversion(value_to_convert):
+            if units_barometric_pressure == "MM":
+                return value_to_convert * 25.4, "mm"
+            elif units_barometric_pressure == "MB":
+                return value_to_convert * 33.8639, "mb"
+            elif units_barometric_pressure == "HP":
+                return value_to_convert * 33.8639, "hPa"
+            else:
+                # Assume default Inches
+                return value_to_convert, "in"
+
+        def wind_conversion(value_to_convert):
+            if units_wind == "K":
+                return value_to_convert * 0.868976, "Knots"
+            elif units_wind == "KPH":
+                return value_to_convert * 1.60934, "Km/h"
+            elif units_wind == "MPS":
+                return value_to_convert * 0.44704, "m/s"
+            else:
+                # Assume default MPH
+                return value_to_convert, "mph"
+
         # get values to convert rain counts to actual units
         rainCollector = {   0: (None, None),
                             1: (0.01,  "in"),
@@ -137,20 +172,24 @@ class Plugin(indigo.PluginBase):
                 value = 0
             
             if key in ['temp','temp_in', 'dew_point', 'dew_point_in', 'heat_index_in', 'wind_chill', 'wet_bulb', 'heat_index', 'thw_index', 'thsw_index']:
-                sensorList.append({'key': key, 'value': value, 'decimalPlaces': 1, 'uiValue': u'{:.1f} °F'.format(value)})
+                value, ui_label = temperature_conversion(value)
+                sensorList.append({'key': key, 'value': value, 'decimalPlaces': 1, 'uiValue': u'{:.1f} °{}'.format(value, ui_label)})
                 
             elif key in ['temp_1','temp_2', 'temp_3', 'temp_4']:
-                sensorList.append({'key': key, 'value': value, 'decimalPlaces': 1, 'uiValue': u'{:.1f} °F'.format(value)})
+                value, ui_label = temperature_conversion(value)
+                sensorList.append({'key': key, 'value': value, 'decimalPlaces': 1, 'uiValue': u'{:.1f} °{}'.format(value, ui_label)})
                 
             elif key in ['hum', 'hum_in']:
                 sensorList.append({'key': key, 'value': value, 'decimalPlaces': 0, 'uiValue': u'{:.0f}%'.format(value)})
             
             elif key in ['bar_sea_level', 'bar_trend', 'bar_absolute']:
-                sensorList.append({'key': key, 'value': value, 'decimalPlaces': 2, 'uiValue': u'{:.2f} inHg'.format(value)})
+                value, ui_label = barometric_pressure_conversion(value)
+                sensorList.append({'key': key, 'value': value, 'decimalPlaces': 2, 'uiValue': u'{:.2f} {}'.format(value, ui_label)})
             
             elif key in ['wind_speed_last', 'wind_speed_avg_last_1_min', 'wind_speed_avg_last_2_min', 'wind_speed_hi_last_2_min', 
                          'wind_speed_avg_last_10_min', 'wind_speed_hi_last_10_min']:
-                sensorList.append({'key': key, 'value': value, 'decimalPlaces': 0, 'uiValue': u'{:.0f} mph'.format(value)})
+                value, ui_label = wind_conversion(value)
+                sensorList.append({'key': key, 'value': value, 'decimalPlaces': 0, 'uiValue': u'{:.0f} {}'.format(value, ui_label)})
             
             elif key in ['wind_dir_last', 'wind_dir_scalar_avg_last_1_min', 'wind_dir_scalar_avg_last_2_min', 'wind_dir_at_hi_speed_last_2_min', 
                          'wind_dir_scalar_avg_last_10_min', 'wind_dir_at_hi_speed_last_10_min']:

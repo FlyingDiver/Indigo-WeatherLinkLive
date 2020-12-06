@@ -1,6 +1,46 @@
 <?xml version="1.0"?>
 <PluginConfig>
 	<SupportURL>http://forums.indigodomo.com/viewforum.php?f=213</SupportURL>
+	<Field id="space1" type="label"><Label/></Field>
+    <Field id="separator1" type="separator"/>
+    <Field id="space2" type="label"><Label/></Field>
+	<Field id="units_temperature" type="menu" defaultValue="F">
+		<Label>Temperature Units:</Label>
+		<List>
+			<Option value="F">Fahrenheit</Option>
+			<Option value="C">Celsius</Option>
+		</List>
+	</Field>
+	<Field id="units_rain" type="menu" defaultValue="IN">
+		<Label>Rain Units:</Label>
+		<List>
+			<Option value="IN">Inches</Option>
+			<Option value="MM">Millimetres</Option>
+		</List>
+	</Field>
+	<Field id="units_barometric_pressure" type="menu" defaultValue="IN">
+		<Label>Barometric Pressure Units:</Label>
+		<List>
+			<Option value="IN">Inches</Option>
+			<Option value="MM">Millimetres</Option>
+			<Option value="MB">Millibars</Option>
+			<Option value="HP">hectoPascals</Option>
+		</List>
+	</Field>
+	<Field id="units_wind" type="menu" defaultValue="MPH">
+		<Label>Wind Units:</Label>
+		<List>
+			<Option value="MPH">Miles per Hour</Option>
+			<Option value="KNO">Knots</Option>
+			<Option value="KPH">Kilometers per Hour</Option>
+			<Option value="MPS">Meters per Second</Option>
+		</List>
+	</Field>
+
+	<Field id="space3" type="label"><Label/></Field>
+    <Field id="separator2" type="separator"/>
+    <Field id="space4" type="label"><Label/></Field>
+
 	<Field id="logLevel" type="menu" defaultValue="20">
 		<Label>Event Logging Level:</Label>
 		<List>
