@@ -119,7 +119,7 @@ class APRS(object):
 
     def send_update(self):
 
-        self.logger.info(u"{}: Sending Update".format(self.device.name))
+        self.logger.debug(u"{}: Sending Update".format(self.device.name))
 
         self.next_update = time.time() + self.updateFrequency
     
