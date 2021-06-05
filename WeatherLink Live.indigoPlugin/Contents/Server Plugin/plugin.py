@@ -13,6 +13,8 @@ from aprs import APRS
 from pws import PWS
 from wunderground import WU
 from weatherlink import WeatherLink
+from airlink import AirLink
+import aqi
 
 kCurDevVersCount = 0        # current version of plugin devices
         
@@ -37,6 +39,7 @@ class Plugin(indigo.PluginBase):
 
         self.updateNeeded = False
         self.weatherlinks = {}          # Dict of Indigo WeatherLink devices, indexed by device.id
+        self.airlinks = {}              # Dict of Indigo AirLink devices, indexed by device.id
         self.sensorDevices = {}         # Dict of Indigo sensor/transmitter devices, indexed by device.id
         self.senders = {}               # Dict of Indigo APRS account devices, indexed by device.id
         self.knownDevices = {}          # Dict of sensor/transmitter devices received by base station, indexed by lsid
@@ -63,6 +66,11 @@ class Plugin(indigo.PluginBase):
                         self.processConditions(link.http_poll())
                         self.sleep(2.0)
                         link.udp_start()
+                        
+                for airDevID, link in self.airlinks.iteritems():
+                    if (time.time() > link.next_poll) or self.updateNeeded:
+                        self.airConditions(airDevID, link.http_poll())
+                        
                 self.updateNeeded = False
 
                 # Upload weather data to networks as needed
@@ -93,7 +101,7 @@ class Plugin(indigo.PluginBase):
             sensor_lsid = str(condition['lsid'])
             sensor_type = str(condition['data_structure_type'])
          
-            if sensor_lsid not in self.knownDevices:
+            if sensor_lsid not in self.knownDevices and sensor_type not in [5, 6]:
                 sensorInfo = {"lsid": sensor_lsid, "type": sensor_type}
                 self.knownDevices[sensor_lsid] = sensorInfo
                 self.logger.debug(u"Added sensor {} to knownDevices: {}".format(sensor_lsid, sensorInfo))
@@ -106,6 +114,19 @@ class Plugin(indigo.PluginBase):
                     self.logger.threaddebug(u"{}: Updating sensor: {}".format(sensorDev.name, stateList))
 
 
+    def airConditions(self, airDevID, conditions):
+    
+        if conditions == None:
+            return
+        
+        airDev = indigo.devices[airDevID]
+        stateList = self.sensorDictToList(conditions[0])
+        airDev.updateStatesOnServer(stateList)
+        sensor_aqi = int(aqi.to_iaqi(aqi.POLLUTANT_PM25, conditions[0]['pm_2p5'], algo=aqi.ALGO_EPA))
+        airDev.updateStateOnServer(key='sensorValue', value=sensor_aqi, uiValue = u'{:.2f}'.format(sensor_aqi))
+        self.logger.threaddebug(u"{}: Updating AirLink: {}".format(airDev.name, stateList))
+
+
 ################################################################################
 #
 #   convert the raw dict the WLL provides to a device-state list, including conversion and UI state generation
@@ -113,6 +134,7 @@ class Plugin(indigo.PluginBase):
 ################################################################################
               
     def sensorDictToList(self, sensor_dict):
+        self.logger.threaddebug("sensorDictToList: sensor_dict = {}".format(sensor_dict))
         # Retrieve user selected reporting units
         units_temperature = self.pluginPrefs.get("units_temperature", "F")
         units_barometric_pressure = self.pluginPrefs.get("units_barometric_pressure", "IN")
@@ -266,6 +288,11 @@ class Plugin(indigo.PluginBase):
             self.weatherlinks[device.id] = WeatherLink(device)
             device.updateStateImageOnServer(indigo.kStateImageSel.SensorOn)
             
+        elif device.deviceTypeId == "airlink":
+ 
+            self.airlinks[device.id] = AirLink(device)
+            device.updateStateImageOnServer(indigo.kStateImageSel.SensorOn)
+            
         elif device.deviceTypeId == "aprs_sender":
  
             self.senders[device.id] = APRS(device)
@@ -314,6 +341,8 @@ class Plugin(indigo.PluginBase):
         self.logger.debug(u"{}: Stopping Device".format(device.name))
         if device.deviceTypeId == "weatherlink":
             del self.weatherlinks[device.id]
+        elif device.deviceTypeId == "airlink":
+            del self.airlinks[device.id]
         elif device.deviceTypeId in ["aprs_sender", "pws_sender", "wu_sender"]:
             del self.senders[device.id]
         else:

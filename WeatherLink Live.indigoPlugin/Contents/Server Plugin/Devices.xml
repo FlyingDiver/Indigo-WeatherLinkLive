@@ -38,6 +38,156 @@
         </States>
         <UiDisplayStateId>status</UiDisplayStateId>
     </Device>       
+    <Device type="sensor" id="airlink">
+        <Name>AirLink Air Quality Sensor</Name>
+        <ConfigUI>  
+            <SupportURL>http://forums.indigodomo.com/viewforum.php?f=214</SupportURL>
+			<Field id="SupportsOnState" type="checkbox" defaultValue="false" hidden="true" />
+			<Field id="SupportsSensorValue" type="checkbox" defaultValue="true" hidden="true" />
+            <Field id="address" type="textfield"  defaultValue="" tooltip="Enter IP address or Hostname of AirLink.">
+                <Label>IP Address or Hostname:</Label>
+            </Field>
+            <Field id="port" type="textfield" defaultValue="80" tooltip="Port number for WeatherLink.">
+                <Label>Port:</Label>
+            </Field>
+            <Field id="pollingFrequency" type="textfield" defaultValue="10">
+                <Label>Poll AirLink every (minutes):</Label>
+            </Field>
+        </ConfigUI> 
+        <States>
+            <State id="lsid">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Logical Sensor ID</TriggerLabel>
+                <ControlPageLabel>Logical Sensor ID</ControlPageLabel>
+            </State>
+            <State id="data_structure_type">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>Data Type</TriggerLabel>
+                <ControlPageLabel>Data Type</ControlPageLabel>
+            </State>
+            <State id="temp">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>Temperature</TriggerLabel>
+                <ControlPageLabel>Temperature</ControlPageLabel>
+            </State>
+            <State id="hum">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>Humidity</TriggerLabel>
+                <ControlPageLabel>Humidity</ControlPageLabel>
+            </State>
+            <State id="dew_point">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>Dew Point</TriggerLabel>
+                <ControlPageLabel>Dew Point</ControlPageLabel>
+            </State>
+            <State id="wet_bulb">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>Wet Bulb</TriggerLabel>
+                <ControlPageLabel>Wet Bulb</ControlPageLabel>
+            </State>
+            <State id="heat_index">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>Heat Index</TriggerLabel>
+                <ControlPageLabel>Heat Index</ControlPageLabel>
+            </State>
+            <State id="pm_1_last">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_1_last</TriggerLabel>
+                <ControlPageLabel>pm_1_last</ControlPageLabel>
+            </State>
+            <State id="pm_2p5_last">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_2p5_last</TriggerLabel>
+                <ControlPageLabel>pm_2p5_last</ControlPageLabel>
+            </State>
+            <State id="pm_10_last">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_10_last</TriggerLabel>
+                <ControlPageLabel>pm_10_last</ControlPageLabel>
+            </State>
+            <State id="pm_1">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_1</TriggerLabel>
+                <ControlPageLabel>pm_1</ControlPageLabel>
+            </State>
+            <State id="pm_2p5">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_2p5</TriggerLabel>
+                <ControlPageLabel>pm_2p5</ControlPageLabel>
+            </State>
+            <State id="pm_10">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_10</TriggerLabel>
+                <ControlPageLabel>pm_10</ControlPageLabel>
+            </State>
+            <State id="pm_2p5_last_1_hour">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_2p5_last_1_hour</TriggerLabel>
+                <ControlPageLabel>pm_2p5_last_1_hour</ControlPageLabel>
+            </State>
+            <State id="pm_2p5_last_3_hours">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_2p5_last_3_hours</TriggerLabel>
+                <ControlPageLabel>pm_2p5_last_3_hours</ControlPageLabel>
+            </State>
+            <State id="pm_2p5_nowcast">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_2p5_nowcast</TriggerLabel>
+                <ControlPageLabel>pm_2p5_nowcast</ControlPageLabel>
+            </State>
+            <State id="pm_2p5_last_24_hours">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_2p5_last_24_hours</TriggerLabel>
+                <ControlPageLabel>pm_2p5_last_24_hours</ControlPageLabel>
+            </State>
+            <State id="pm_10_last_1_hour">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_10_last_1_hour</TriggerLabel>
+                <ControlPageLabel>pm_10_last_1_hour</ControlPageLabel>
+            </State>
+            <State id="pm_10_last_3_hours">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_10_last_3_hours</TriggerLabel>
+                <ControlPageLabel>pm_10_last_3_hours</ControlPageLabel>
+            </State>
+            <State id="pm_10_nowcast">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_10_nowcast</TriggerLabel>
+                <ControlPageLabel>pm_10_nowcast</ControlPageLabel>
+            </State>
+            <State id="pm_10_last_24_hours">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pm_10_last_24_hours</TriggerLabel>
+                <ControlPageLabel>pm_10_last_24_hours</ControlPageLabel>
+            </State>
+            <State id="last_report_time">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>last_report_time</TriggerLabel>
+                <ControlPageLabel>last_report_time</ControlPageLabel>
+            </State>
+            <State id="pct_pm_data_last_1_hour">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pct_pm_data_last_1_hour</TriggerLabel>
+                <ControlPageLabel>pct_pm_data_last_1_hour</ControlPageLabel>
+            </State>
+            <State id="pct_pm_data_last_3_hours">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pct_pm_data_last_3_hours</TriggerLabel>
+                <ControlPageLabel>pct_pm_data_last_3_hours</ControlPageLabel>
+            </State>
+            <State id="pct_pm_data_nowcast">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pct_pm_data_nowcast</TriggerLabel>
+                <ControlPageLabel>pct_pm_data_nowcast</ControlPageLabel>
+            </State>
+            <State id="pct_pm_data_last_24_hours">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>pct_pm_data_last_24_hours</TriggerLabel>
+                <ControlPageLabel>pct_pm_data_last_24_hours</ControlPageLabel>
+            </State>
+        </States>
+        <UiDisplayStateId>status</UiDisplayStateId>
+    </Device>       
     <Device type="custom" id="issSensor">
         <Name>Integrated Sensor Suite</Name>
         <ConfigUI>
