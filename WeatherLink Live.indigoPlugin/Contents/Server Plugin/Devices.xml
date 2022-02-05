@@ -55,7 +55,12 @@
             </Field>
         </ConfigUI> 
         <States>
-            <State id="lsid">
+            <State id="status">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Status</TriggerLabel>
+                <ControlPageLabel>Status</ControlPageLabel>
+            </State>
+           <State id="lsid">
                 <ValueType>String</ValueType>
                 <TriggerLabel>Logical Sensor ID</TriggerLabel>
                 <ControlPageLabel>Logical Sensor ID</ControlPageLabel>
