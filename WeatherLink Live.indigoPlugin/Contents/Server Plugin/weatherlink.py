@@ -40,14 +40,14 @@ class WeatherLink(object):
     def udp_start(self):
 
         if not self.device.pluginProps['enableUDP']:
-            self.logger.debug(u"{}: udp_start() aborting, not enabled".format(self.device.name))
+            self.logger.debug(f"{self.device.name}: udp_start() aborting, not enabled")
             return
 
         url = f"http://{self.address}:{self.http_port}/v1/real_time"    # noqa
         try:
             response = requests.get(url, timeout=3.0)
         except requests.exceptions.RequestException as err:
-            self.logger.error(u"{}: udp_start() RequestException: {}".format(self.device.name, err))
+            self.logger.error(f"{self.device.name}: udp_start() RequestException: {err}")
             stateList = [
                 {'key': 'status', 'value': 'HTTP Error'},
             ]
@@ -58,7 +58,7 @@ class WeatherLink(object):
         try:
             json_data = response.json()
         except Exception as err:
-            self.logger.error(u"{}: udp_start() JSON decode error: {}".format(self.device.name, err))
+            self.logger.error(f"{self.device.name}: udp_start() JSON decode error: {err}")
             stateList = [
                 {'key': 'status', 'value': 'JSON Error'},
             ]
@@ -68,10 +68,10 @@ class WeatherLink(object):
 
         if json_data['error']:
             if json_data['error']['code'] == 409:
-                self.logger.debug(u"{}: udp_start() aborting, no ISS sensors".format(self.device.name))
+                self.logger.debug(f"{self.device.name}: udp_start() aborting, no ISS sensors")
             else:
-                self.logger.error(u"{}: udp_start() error, code: {}, message: {}".format(self.device.name, json_data['error']['code'],
-                                                                                         json_data['error']['message']))
+                self.logger.error(
+                    f"{self.device.name}: udp_start() error, code: {json_data['error']['code']}, message: {json_data['error']['message']}")
             stateList = [
                 {'key': 'status', 'value': 'Server Error'},
             ]
@@ -79,8 +79,8 @@ class WeatherLink(object):
             self.device.updateStateImageOnServer(indigo.kStateImageSel.SensorTripped)
             return
 
-        self.logger.debug(u"{}: udp_start() broadcast_port = {}, duration = {}".format(self.device.name, json_data['data']['broadcast_port'],
-                                                                                       json_data['data']['duration']))
+        self.logger.debug(
+            f"{self.device.name}: udp_start() broadcast_port = {json_data['data']['broadcast_port']}, duration = {json_data['data']['duration']}")
 
         # set up socket listener
 
@@ -98,7 +98,7 @@ class WeatherLink(object):
                 ]
                 self.device.updateStatesOnServer(stateList)
             else:
-                self.logger.debug(u"{}: udp_start() socket listener started".format(self.device.name))
+                self.logger.debug(f"{self.device.name}: udp_start() socket listener started")
 
     def udp_receive(self):
         if not self.sock:

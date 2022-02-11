@@ -16,33 +16,35 @@ class WU(object):
     def __init__(self, device):
 
         self.logger = logging.getLogger("Plugin.PWS")
-        self.device = device
+        self.deviceId = device.id
 
-        self.address = self.device.pluginProps.get('address', None)
-        self.password = self.device.pluginProps.get('password', None)
-        self.server_host = self.device.pluginProps.get('host', 'weatherstation.wunderground.com')
-        self.server_port = self.device.pluginProps.get('port', 80)
+        self.address = device.pluginProps.get('address', None)
+        self.password = device.pluginProps.get('password', None)
+        self.server_host = device.pluginProps.get('host', 'weatherstation.wunderground.com')
+        self.server_port = device.pluginProps.get('port', 80)
 
-        self.iss_device = int(self.device.pluginProps.get('iss_device', None))
-        self.baro_device = int(self.device.pluginProps.get('baro_device', None))
+        self.iss_device = int(device.pluginProps.get('iss_device', None))
+        self.baro_device = int(device.pluginProps.get('baro_device', None))
 
-        self.updateFrequency = (float(self.device.pluginProps.get('updateFrequency', "10")) * 60.0)
+        self.updateFrequency = (float(device.pluginProps.get('updateFrequency', "10")) * 60.0)
         self.next_update = time.time()
 
         self.logger.debug(
             f"{self.device.name}: PWS station_id = {self.address}, server_host = {self.server_host}, server_port = {self.server_port}")
 
     def __del__(self):
+        device = indigo.devices[self.deviceId]
         stateList = [
             {'key': 'status', 'value': "Off"},
             {'key': 'timestamp', 'value': datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
         ]
-        self.device.updateStatesOnServer(stateList)
-        self.device.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)
+        device.updateStatesOnServer(stateList)
+        device.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)
 
     def send_update(self):
+        device = indigo.devices[self.deviceId]
 
-        self.logger.debug(f"{self.device.name}: Sending Update")
+        self.logger.debug(f"{device.name}: Sending Update")
 
         self.next_update = time.time() + self.updateFrequency
 
@@ -73,21 +75,21 @@ class WU(object):
             'windgustdir': float(iss_device.states['wind_dir_at_hi_speed_last_10_min']),
         }
 
-        self.logger.debug(f"{self.device.name}: WU upload data = {data}")
+        self.logger.debug(f"{device.name}: WU upload data = {data}")
 
         try:
             r = requests.get(url, params=data)
         except Exception as err:
-            self.logger.error(f"{self.device.name}: send_update error: {err}")
+            self.logger.error(f"{device.name}: send_update error: {err}")
             status = "Request Error"
             stateImage = indigo.kStateImageSel.SensorTripped
         else:
             if not r.text.find('success') >= 0:
-                self.logger.error(f"{self.device.name}: send_update error: {r.text}")
+                self.logger.error(f"{device.name}: send_update error: {r.text}")
                 status = "Data Error"
                 stateImage = indigo.kStateImageSel.SensorTripped
             else:
-                self.logger.debug(f"{self.device.name}: send_update complete")
+                self.logger.debug(f"{device.name}: send_update complete")
                 status = "OK"
                 stateImage = indigo.kStateImageSel.SensorOn
 
@@ -95,5 +97,5 @@ class WU(object):
             {'key': 'status', 'value': status},
             {'key': 'timestamp', 'value': datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
         ]
-        self.device.updateStatesOnServer(stateList)
-        self.device.updateStateImageOnServer(stateImage)
+        device.updateStatesOnServer(stateList)
+        device.updateStateImageOnServer(stateImage)

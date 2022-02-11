@@ -25,7 +25,7 @@ class Plugin(indigo.PluginBase):
         self.plugin_file_handler.setFormatter(pfmt)
         self.logLevel = int(self.pluginPrefs.get("logLevel", logging.INFO))
         self.indigo_log_handler.setLevel(self.logLevel)
-        self.logger.debug(f"logLevel = {str(self.logLevel)}")
+        self.logger.debug(f"logLevel = {self.logLevel}")
 
         self.updateNeeded = False
         self.weatherlinks = {}  # Dict of Indigo WeatherLink devices, indexed by device.id
@@ -38,7 +38,7 @@ class Plugin(indigo.PluginBase):
         self.logger.info("Starting WeatherLink Live")
 
     def shutdown(self):
-        self.logger.info(u"Shutting down WeatherLink Live")
+        self.logger.info("Shutting down WeatherLink Live")
 
     def runConcurrentThread(self):
 
@@ -109,7 +109,10 @@ class Plugin(indigo.PluginBase):
         airDev = indigo.devices[airDevID]
         stateList = self.sensorDictToList(conditions[0])
         airDev.updateStatesOnServer(stateList)
-        sensor_aqi = int(aqi.to_iaqi(aqi.POLLUTANT_PM25, conditions[0]['pm_2p5'], algo=aqi.ALGO_EPA))
+        try:
+            sensor_aqi = int(aqi.to_iaqi(aqi.POLLUTANT_PM25, conditions[0]['pm_2p5'], algo=aqi.ALGO_EPA))
+        except (Exception,):
+            sensor_aqi = -1.0
         airDev.updateStateOnServer(key='sensorValue', value=sensor_aqi, uiValue=u'{:.2f}'.format(sensor_aqi))
         self.logger.threaddebug(f"{airDev.name}: Updating AirLink: {stateList}")
 
@@ -241,7 +244,7 @@ class Plugin(indigo.PluginBase):
 
         instanceVers = int(device.pluginProps.get('devVersCount', 0))
         if instanceVers == kCurDevVersCount:
-            self.logger.threaddebug(u"{}: Device is current version: {}".format(device.name, instanceVers))
+            self.logger.threaddebug(f"{device.name}: Device is current version: {instanceVers}")
         elif instanceVers < kCurDevVersCount:
             newProps = device.pluginProps
             newProps["devVersCount"] = kCurDevVersCount
@@ -349,7 +352,7 @@ class Plugin(indigo.PluginBase):
             if devInfo['type'] == filter:
                 retList.append((devInfo['lsid'], "{}: {}".format(devInfo['lsid'], sensorTypes[filter])))
         retList.sort(key=lambda tup: tup[1])
-        self.logger.debug(u"availableDeviceList: retList = {}".format(retList))
+        self.logger.debug(f"availableDeviceList: retList = {retList}")
         return retList
 
     def issDeviceList(self, filter=None, valuesDict=None, typeId=0, targetId=0):
@@ -392,7 +395,7 @@ class Plugin(indigo.PluginBase):
         return True
 
     def dumpKnownDevices(self):
-        self.logger.info(f"Known device list:\n{str(self.knownDevices)}")
+        self.logger.info(f"Known device list:\n{self.knownDevices}")
 
     # doesn't do anything, just needed to force other menus to dynamically refresh
     @staticmethod
