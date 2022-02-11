@@ -30,7 +30,7 @@ class WU(object):
         self.next_update = time.time()
 
         self.logger.debug(
-            f"{self.device.name}: PWS station_id = {self.address}, server_host = {self.server_host}, server_port = {self.server_port}")
+            f"{device.name}: PWS station_id = {self.address}, server_host = {self.server_host}, server_port = {self.server_port}")
 
     def __del__(self):
         device = indigo.devices[self.deviceId]
