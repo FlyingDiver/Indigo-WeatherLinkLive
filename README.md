@@ -4,6 +4,14 @@ Plugin for the Indigo Home Automation system.
 
 This plugin communicates with the Dave Instruments WeatherLink Live device.
 
+| Requirement            |                     |   |
+|------------------------|---------------------|---|
+| Minimum Indigo Version | 2022.1              |   |
+| Python Library (API)   | Official            |   |
+| Requires Local Network | Yes                 |   |
+| Requires Internet      | Optional            | For weather reporting only  |
+| Hardware Interface     | None                |   |
+
 ## Quick Start
 
 1. Install Plugin
@@ -15,7 +23,4 @@ This plugin communicates with the Dave Instruments WeatherLink Live device.
 
 **PluginID**: com.flyingdiver.indigoplugin.weatherlink-live
 
-### Indigo 7 Only
-
-This plugin requires Indigo 7 or greater.
 
